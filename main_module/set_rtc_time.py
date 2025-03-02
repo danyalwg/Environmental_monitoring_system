@@ -19,21 +19,36 @@ def connect_wifi():
     print("Connected to Wi-Fi:", wlan.ifconfig())
 
 def sync_rtc_with_ntp():
-    """Sync RTC with an alternative NTP server and set the DS3231 time correctly."""
+    """
+    Sync the ESP32's RTC with an NTP server, then adjust the time by +5 hours
+    (GMT+5) and set the DS3231 time accordingly.
+    """
     try:
-        ntptime.host = "asia.pool.ntp.org"  # Use reliable NTP server
-        ntptime.settime()  # Sync ESP32 RTC with NTP
+        # Specify a reliable NTP server
+        ntptime.host = "asia.pool.ntp.org"
+        # Sync the device's RTC to UTC
+        ntptime.settime()
         
-        rtc = RTC()
-        year, month, day, _, hour, minute, second, _ = rtc.datetime()
+        # The ESP32's internal RTC is now set to UTC. Retrieve the current UTC time:
+        now_utc = time.localtime()  # returns a tuple (year, month, day, hour, minute, second, weekday, yearday)
         
-        set_time(year, month, day, hour, minute, second)  # Set DS3231 RTC
-        print(f"RTC updated with NTP time: {year} {month} {day} {hour} {minute} {second}")
+        # Convert this tuple to an epoch timestamp, add 5 hours, then convert back to a time tuple
+        epoch_utc = time.mktime(now_utc)
+        epoch_plus_5 = epoch_utc + (5 * 3600)  # 5 hours in seconds
+        now_plus_5 = time.localtime(epoch_plus_5)
+        
+        # now_plus_5 = (year, month, day, hour, minute, second, weekday, yearday)
+        # Set the DS3231 time to GMT+5
+        set_time(now_plus_5[0], now_plus_5[1], now_plus_5[2],
+                 now_plus_5[3], now_plus_5[4], now_plus_5[5])
+        
+        print("RTC updated to GMT+5:")
+        print(f"{now_plus_5[0]}-{now_plus_5[1]:02d}-{now_plus_5[2]:02d} "
+              f"{now_plus_5[3]:02d}:{now_plus_5[4]:02d}:{now_plus_5[5]:02d}")
     except Exception as e:
         print("Failed to sync time:", e)
-
-
 
 if __name__ == "__main__":
     connect_wifi()
     sync_rtc_with_ntp()
+
