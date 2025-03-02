@@ -14,9 +14,10 @@ import sd_card_logging  # SD card logging module
 # Import your ESP‑NOW helper module (assumed already set up)
 import lora
 
-# Initialize the SD card and create a new CSV file on startup.
+# Initialize the SD card (only if available)
 sd_card_logging.init_sd_card()
-sd_card_logging.create_new_csv()
+if sd_card_logging.sd_available:
+    sd_card_logging.create_new_csv()
 
 # Set the receiver’s MAC address (update this to your receiver’s MAC)
 receiver_mac = b'\x14\x2b\x2f\xc4\xc7\x5c'
@@ -78,8 +79,9 @@ def main():
 
         # Print the full sensor packet (this is what your GUI sees)
         print(json.dumps(sensor_packet))
-        # Log the sensor values to the SD card
-        sd_card_logging.log_to_csv(sensor_packet)
+        # Log data to SD card (only if available)
+        if sd_card_logging.sd_available:
+            sd_card_logging.log_to_csv(sensor_packet)
 
         # ---------------------------
         # 3. Create the Sending Array (compact version)
@@ -117,3 +119,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
