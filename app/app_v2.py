@@ -273,6 +273,7 @@ class DigitalTab(QWidget):
 
     def initUI(self):
         layout = QVBoxLayout()
+
         # RTC Group
         rtc_group = QGroupBox("RTC")
         rtc_layout = QFormLayout()
@@ -282,6 +283,19 @@ class DigitalTab(QWidget):
         rtc_layout.addRow("Time:", self.label_time)
         rtc_group.setLayout(rtc_layout)
         layout.addWidget(rtc_group)
+
+        # BME280 Group (moved directly after RTC)
+        bme_group = QGroupBox("BME280")
+        bme_layout = QFormLayout()
+        self.label_temp = QLabel("N/A")
+        self.label_pressure = QLabel("N/A")
+        self.label_humidity = QLabel("N/A")
+        bme_layout.addRow("Temperature (°C):", self.label_temp)
+        bme_layout.addRow("Pressure (hPa):", self.label_pressure)
+        bme_layout.addRow("Humidity (%):", self.label_humidity)
+        bme_group.setLayout(bme_layout)
+        layout.addWidget(bme_group)
+
         # MQ9 Group
         mq9_group = QGroupBox("MQ9")
         mq9_layout = QFormLayout()
@@ -293,6 +307,7 @@ class DigitalTab(QWidget):
         mq9_layout.addRow("CH4 (ppm):", self.label_mq9_ch4)
         mq9_group.setLayout(mq9_layout)
         layout.addWidget(mq9_group)
+
         # MQ135 Group
         mq135_group = QGroupBox("MQ135")
         mq135_layout = QFormLayout()
@@ -310,17 +325,7 @@ class DigitalTab(QWidget):
         mq135_layout.addRow("Acetone (ppm):", self.label_mq135_acetone)
         mq135_group.setLayout(mq135_layout)
         layout.addWidget(mq135_group)
-        # BME280 Group
-        bme_group = QGroupBox("BME280")
-        bme_layout = QFormLayout()
-        self.label_temp = QLabel("N/A")
-        self.label_pressure = QLabel("N/A")
-        self.label_humidity = QLabel("N/A")
-        bme_layout.addRow("Temperature (°C):", self.label_temp)
-        bme_layout.addRow("Pressure (hPa):", self.label_pressure)
-        bme_layout.addRow("Humidity (%):", self.label_humidity)
-        bme_group.setLayout(bme_layout)
-        layout.addWidget(bme_group)
+
         # Dust Sensor Group
         dust_group = QGroupBox("Dust Sensor")
         dust_layout = QFormLayout()
@@ -334,6 +339,7 @@ class DigitalTab(QWidget):
         dust_layout.addRow("AQI:", self.label_dust_aqi)
         dust_group.setLayout(dust_layout)
         layout.addWidget(dust_group)
+
         # UV Sensor Group
         uv_group = QGroupBox("UV Sensor")
         uv_layout = QFormLayout()
@@ -343,8 +349,10 @@ class DigitalTab(QWidget):
         uv_layout.addRow("UV Index:", self.label_uv_index)
         uv_group.setLayout(uv_layout)
         layout.addWidget(uv_group)
+
         layout.addStretch()
         self.setLayout(layout)
+
         # Mapping for warning color updates.
         self.digital_labels = {
             "MQ9 LPG": self.label_mq9_lpg,
